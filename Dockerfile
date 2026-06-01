@@ -1,20 +1,21 @@
-# 使用 Node.js 18 作为基础镜像
+# 使用 node:18-alpine 作为基础镜像
 FROM node:18-alpine
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制 package.json 和 package-lock.json
-COPY package*.json ./
+# 1. 复制依赖描述文件
+COPY package.json package-lock.json ./
 
-# 安装依赖
-RUN npm install
-
-# 复制项目所有文件到工作目录
+# 2. 关键步骤：在安装依赖之前，先把所有代码复制进去
+# 因为 package.json 的 postinstall 脚本需要访问 client/server 等目录
 COPY . .
 
-# 暴露服务端口（例如 WorldX 的服务器端口 3100 和客户端端口 3200）
-EXPOSE 3100 3200
+# 3. 安装所有依赖
+# 由于之前执行了 COPY . .，现在 npm install 会触发 postinstall 脚本
+# 脚本能够找到 client 等目录，安装过程将顺利进行
+RUN npm install
 
-# 启动命令（根据你的 package.json 修改）
-CMD ["npm", "run", "dev"]
+# 4. 暴露端口并启动应用 (根据你的项目需求调整)
+EXPOSE 3200
+CMD ["npm", "start"]
