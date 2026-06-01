@@ -1,6 +1,6 @@
 name: Build and Publish Docker Image
 
-# 触发条件：当推送到 main 分支或发布新 Tag 时触发
+# 触发条件
 on:
   push:
     branches: [ "main" ]
@@ -10,6 +10,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  # 解决 Node.js 20 弃用警告
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-push:
@@ -29,7 +31,6 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          # 自动使用 GitHub 提供的 Token，无需手动配置
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for Docker
