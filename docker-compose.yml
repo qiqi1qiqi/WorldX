@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  worldx-app:
+    image: ghcr.io/qiqi1qiqi/worldx:main  # 如果你已经推送到自己的仓库，用你的镜像名；或者用下面的 build 本地构建
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    container_name: worldx-simulation
+    restart: unless-stopped
+    
+    # 映射客户端(3200)和服务器(3100)端口到宿主机
+    ports:
+      - "3200:3200"
+      - "3100:3100"
+    
+    # 将宿主机的 .env 文件挂载进容器，方便随时修改模型 API Key 
+    # 容器启动时会自动读取应用根目录下的 .env
+    volumes:
+      - ./.env:/app/.env
+      # 如果需要持久化生成的世界数据，可以把 output 目录挂载出来
+      - ./output:/app/output
+    
+    # 环境变量配置
+    environment:
+      - NODE_ENV=development
+      # 如果你在国内环境遇到 Node.js 容器内无法请求大模型 API，可以取消注释并配置代理
+      # - HTTP_PROXY=http://host.docker.internal:7890
+      # - HTTPS_PROXY=http://host.docker.internal:7890
+      # - ALL_PROXY=socks5://host.docker.internal:7890
+    
+    # 允许容器通过 host.docker.internal 访问宿主机的代理软件
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
