@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   worldx-app:
-    image: ghcr.io/qiqi1qiqi/worldx:main  # 如果你已经推送到自己的仓库，用你的镜像名；或者用下面的 build 本地构建
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    # image: ghcr.io/qiqi1qiqi/worldx:main  # 如果你已经推送到自己的仓库，用你的镜像名；或者用下面的 build 本地构建
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: worldx-simulation
     restart: unless-stopped
     
